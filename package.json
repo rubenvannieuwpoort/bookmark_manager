@@ -29,6 +29,7 @@
     "typescript": "^4.9.0"
   },
   "dependencies": {
+    "@smui/fab": "^7.0.0-beta.16",
     "sirv-cli": "^2.0.0"
   }
 }
