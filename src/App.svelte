@@ -1,20 +1,38 @@
 <script lang="ts">
-	import Item from './components/Item.svelte'
+	import Item from './components/Item.svelte';
+    import type { SyncPoint } from './types/SyncPoint';
 
-    let content = [
-        'Hello, world',
-        'Goodbye, world',
-		'This is yet another item'
+    let content: SyncPoint[] = [
+		{
+			name: 'First bookmark',
+			source: 'asdfsadfadsf',
+			active: true
+		},
+		{
+			name: 'Second bookmark',
+			source: 'asdfsadfadsf',
+			active: false
+		},
+		{
+			name: 'Third bookmark',
+			source: 'asdfsadfadsf',
+			active: true
+		},
     ]
 </script>
 
 <main>
-	<div>
+	<div class="container">
 		{#each content as item}
-			<Item>{item}</Item>
+			<Item Item={item} />
 		{/each}
 	</div>
 </main>
 
 <style>
+	.container {
+		width: 500px;
+		height: 500px;
+		border: 1px solid black;
+	}
 </style>
