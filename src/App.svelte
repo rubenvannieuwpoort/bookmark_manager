@@ -1,11 +1,18 @@
 <script lang="ts">
-	import Card from '@smui/card';
+	import Item from './components/Item.svelte'
+
+    let content = [
+        'Hello, world',
+        'Goodbye, world',
+		'This is yet another item'
+    ]
 </script>
 
 <main>
 	<div>
-		<Card variant="outlined" padded>Hello, world</Card>
-		<Card variant="outlined" padded>Goodbye, world</Card>
+		{#each content as item}
+			<Item>{item}</Item>
+		{/each}
 	</div>
 </main>
 
