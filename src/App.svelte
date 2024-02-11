@@ -1,8 +1,9 @@
 <script lang="ts">
 	import Item from './components/Item.svelte';
 	import Fab, { Icon } from '@smui/fab';
+	import Textfield from '@smui/textfield';
 	import Button, { Label } from '@smui/button';
-	import Dialog, { Header, Content, Actions, InitialFocus } from '@smui/dialog';
+	import Dialog, { Header, Content, Actions } from '@smui/dialog';
 	import IconButton from '@smui/icon-button';
     import type { SyncPoint } from './types/SyncPoint';
 
@@ -25,6 +26,8 @@
     ];
 
 	let open = true;
+
+	let text: string = '';
 </script>
 
 <main>
@@ -56,6 +59,9 @@
 		</Header>
 		<Content id="fullscreen-content">
 			Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.
+
+			<Textfield bind:value={text} label="Label">
+			</Textfield>
 		</Content>
 		<Actions>
 			<Button action="reject">
