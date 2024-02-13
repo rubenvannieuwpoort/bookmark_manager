@@ -77,8 +77,8 @@
 
 <style>
 	.container {
-		width: 500px;
-		height: 500px;
+		width: 350px;
+		height: 400px;
 		border: 1px solid black;
 	}
 
@@ -87,5 +87,4 @@
 		justify-content: right;
 		margin: 10px;
 	}
-
 </style>
