@@ -38,7 +38,7 @@
 				on:click={() => alert('click')}
 				on:toggle={() => alert('toggle')}
 				on:download={() => alert('download')}
-			}/>
+			/>
 		{/each}
 
 		<div class="buttoncontainer">
