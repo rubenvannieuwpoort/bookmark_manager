@@ -45,6 +45,7 @@
 		</div>
 	</div>
 
+	<!-- This should be moved to its own component, but I can't make that work... -->
 	<Dialog
 		bind:open
 		fullscreen
