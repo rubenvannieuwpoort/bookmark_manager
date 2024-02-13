@@ -19,6 +19,7 @@
                 <Checkbox bind:checked on:change={() => dispatch('toggle')} />
             </div>
 
+            <!-- svelte-ignore a11y-click-events-have-key-events -->
             <div class="itemtextholder" on:click={() => dispatch('click')}>
                 <div class="itemtext">
                     {Item.name}
