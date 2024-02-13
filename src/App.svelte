@@ -33,7 +33,12 @@
 <main>
 	<div class="container">
 		{#each content as item}
-			<Item Item={item} />
+			<Item
+				Item={item}
+				on:click={() => alert('click')}
+				on:toggle={() => alert('toggle')}
+				on:download={() => alert('download')}
+			}/>
 		{/each}
 
 		<div class="buttoncontainer">
