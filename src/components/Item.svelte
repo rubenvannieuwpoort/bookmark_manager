@@ -16,7 +16,7 @@
     <Card class="card" variant="outlined" style={'margin: 5px; padding: 5px;' + (Item.active ? ' color: black;' : ' color: grey;')}>
         <div class="itembody">
             <div>
-                <Checkbox bind:checked on:change={() => dispatch('toggle')} />
+                <Checkbox bind:checked on:change={() => dispatch('toggle', { checked: checked })} />
             </div>
 
             <!-- svelte-ignore a11y-click-events-have-key-events -->
