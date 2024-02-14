@@ -1,11 +1,11 @@
 <script lang="ts">
-    import type {SyncPoint} from '../types/SyncPoint';
+    import type { Collection } from '../types/Collection';
     import Card from '@smui/card';
     import Checkbox from '@smui/checkbox';
     import IconButton from '@smui/icon-button';
     import { createEventDispatcher } from 'svelte';
 
-    export let Item: SyncPoint;
+    export let Item: Collection;
 
     const dispatch = createEventDispatcher();
 

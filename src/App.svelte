@@ -1,5 +1,7 @@
 <script lang="ts">
 	import Item from './components/Item.svelte';
+    import type { Collection } from './types/Collection';
+
 	import Fab, { Icon } from '@smui/fab';
 	import Textfield from '@smui/textfield';
 	import Button, { Label } from '@smui/button';
@@ -7,27 +9,22 @@
 	import IconButton from '@smui/icon-button';
     import type { SyncPoint } from './types/SyncPoint';
 
-    let content: SyncPoint[] = [
+    let collections: Collection[] = [
 		{
 			name: 'First bookmark',
 			source: 'asdfsadfadsf',
+			target: 'bookmarkbar',
+			targetFolder: 'My active collection!',
 			active: true
 		},
 		{
-			name: 'Second bookmark',
-			source: 'asdfsadfadsf',
+			name: 'My non-active collection',
+			source: 'http://nonactivecollection.com',
+			target: 'other',
+			targetFolder: '(Non-active... )',
 			active: false
-		},
-		{
-			name: 'Third bookmark',
-			source: 'asdfsadfadsf',
-			active: true
-		},
+		}
     ];
-
-	let open = true;
-
-	let text: string = '';
 </script>
 
 <main>
