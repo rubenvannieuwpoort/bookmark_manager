@@ -18,6 +18,7 @@
     "@smui/checkbox": "^7.0.0-beta.16",
     "@smui/dialog": "^7.0.0-beta.16",
     "@smui/icon-button": "^7.0.0-beta.16",
+    "@smui/select": "^7.0.0-beta.16",
     "@smui/textfield": "^7.0.0-beta.16",
     "@tsconfig/svelte": "^3.0.0",
     "rollup": "^3.15.0",
