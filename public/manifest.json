@@ -1,0 +1,14 @@
+{
+    "manifest_version": 3,
+    "name": "Bookmark Manager",
+    "version": "0.1.0",
+    "description": "A simple extension to import public collections of bookmarks.",
+    "action": {
+        "default_title": "Bookmark Manager",
+        "default_icon": "favicon.png",
+        "default_popup": "index.html"
+    },
+    "permissions": [
+        "storage"
+    ]
+}
