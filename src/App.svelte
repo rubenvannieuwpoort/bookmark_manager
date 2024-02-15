@@ -1,4 +1,6 @@
 <script lang="ts">
+	import loadCollections from './browser-specific/LoadCollections';
+
 	import { onMount } from 'svelte';
 	import Item from './components/Item.svelte';
     import type { Collection } from './types/Collection';
@@ -8,10 +10,12 @@
 	import Button, { Label } from '@smui/button';
 	import Dialog, { Header, Content, Actions } from '@smui/dialog';
 	import Select, { Option } from '@smui/select';
+	import CircularProgress from '@smui/circular-progress';
 	
 	let editingCollection: Collection | null = null;
 	let editableTitle = '';
 	let dialogOpen = false;
+	let loading = false;
 
 	const newCollectionTemplate: Collection = {
 		name: 'My new collection',
@@ -24,10 +28,11 @@
     let collections: Collection[] = [];
 	
 	onMount(async () => {
-		let result = await chrome.storage.local.get('collections');
-		if ('collections' in result) {
-			collections = result['collections'];
-		}
+		loading = true;
+		loadCollections().then((loadedCollections) => {
+			collections = loadedCollections;
+			loading = false;
+		});
 	});
 
 	let placeholderCollection: Collection = {...newCollectionTemplate};
@@ -71,6 +76,11 @@
 
 <main>
 	<div class="container">
+		{#if loading}
+			<div style="display: flex; justify-content: center">
+				<CircularProgress style="height: 32px; width: 32px;" indeterminate />
+			</div>
+		{:else}
 		{#each collections as collection}
 			<Item
 				Item={collection}
@@ -78,15 +88,16 @@
 				on:toggle={(e) => collection.active = e.detail.checked}
 				on:download={() => alert('download')}
 			/>
-		{/each}
+			{/each}
 
-		<div class="buttoncontainer">
-			<Fab mini on:click={addNewCollection}>
-				<Icon tag="svg" viewBox="0 0 448 512">
-					<path fill="currentcolor" d="M256 80c0-17.7-14.3-32-32-32s-32 14.3-32 32V224H48c-17.7 0-32 14.3-32 32s14.3 32 32 32H192V432c0 17.7 14.3 32 32 32s32-14.3 32-32V288H400c17.7 0 32-14.3 32-32s-14.3-32-32-32H256V80z" />
-				</Icon>
-			</Fab>
-		</div>
+			<div class="buttoncontainer">
+				<Fab mini on:click={addNewCollection}>
+					<Icon tag="svg" viewBox="0 0 448 512">
+						<path fill="currentcolor" d="M256 80c0-17.7-14.3-32-32-32s-32 14.3-32 32V224H48c-17.7 0-32 14.3-32 32s14.3 32 32 32H192V432c0 17.7 14.3 32 32 32s32-14.3 32-32V288H400c17.7 0 32-14.3 32-32s-14.3-32-32-32H256V80z" />
+					</Icon>
+				</Fab>
+			</div>
+		{/if}
 	</div>
 
 	<!-- This should be moved to its own component, but I can't make that work... -->
