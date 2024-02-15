@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { onMount } from 'svelte';
 	import Item from './components/Item.svelte';
     import type { Collection } from './types/Collection';
 
@@ -21,6 +22,13 @@
 	};
 
     let collections: Collection[] = [];
+	
+	onMount(async () => {
+		let result = await chrome.storage.local.get('collections');
+		if ('collections' in result) {
+			collections = result['collections'];
+		}
+	});
 
 	let placeholderCollection: Collection = {...newCollectionTemplate};
 
@@ -52,6 +60,8 @@
 		}
 
 		dialogOpen = false;
+
+		chrome.storage.local.set({ collections: collections });
 	}
 
 	function cancel() {
