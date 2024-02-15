@@ -77,8 +77,8 @@
 <main>
 	<div class="container">
 		{#if loading}
-			<div style="display: flex; justify-content: center">
-				<CircularProgress style="height: 32px; width: 32px;" indeterminate />
+			<div style="display: flex; flex-wrap: wrap; height: inherit; justify-content: center; align-content: center;">
+				<CircularProgress style="height: 48px; width: 48px;" indeterminate />
 			</div>
 		{:else}
 		{#each collections as collection}
