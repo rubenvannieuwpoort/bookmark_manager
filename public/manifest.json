@@ -10,5 +10,8 @@
     },
     "permissions": [
         "storage"
-    ]
+    ],
+    "icons": {
+        "128": "favicon.png"
+    }
 }
