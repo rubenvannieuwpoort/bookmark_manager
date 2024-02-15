@@ -8,13 +8,15 @@
 	import Fab, { Icon } from '@smui/fab';
 	import Textfield from '@smui/textfield';
 	import Button, { Label } from '@smui/button';
-	import Dialog, { Header, Content, Actions } from '@smui/dialog';
+	import Dialog, { Title, Header, Content, Actions } from '@smui/dialog';
 	import Select, { Option } from '@smui/select';
 	import CircularProgress from '@smui/circular-progress';
-	
-	let editingCollection: Collection | null = null;
+
+	let idx = 0;
+
+	let deleteConfirmationOpen = false;
 	let editableTitle = '';
-	let dialogOpen = false;
+	let editDialogOpen = false;
 	let loading = false;
 
 	const newCollectionTemplate: Collection = {
@@ -22,7 +24,7 @@
 		source: '',
 		target: 'bookmarkbar',
 		targetFolder: 'My new collection',
-		active: true
+		active: false
 	};
 
     let collections: Collection[] = [];
@@ -38,39 +40,56 @@
 	let placeholderCollection: Collection = {...newCollectionTemplate};
 
 	function addNewCollection() {
-		editingCollection = null;
-		editableTitle = newCollectionTemplate.name;
-		placeholderCollection = {...newCollectionTemplate};
-		dialogOpen = true;
+		idx = -1;
+		editCollection(newCollectionTemplate);
+	}
+
+	function editIndex(i: number) {
+		idx = i;
+		editCollection(collections[i]);
 	}
 
 	function editCollection(collection: Collection) {
-		editingCollection = collection;
 		editableTitle = collection.name;
 		placeholderCollection = {...collection};
-		dialogOpen = true;
+		editDialogOpen = true;
 	}
 
 	function save() {
 		placeholderCollection.name = editableTitle;
 
-		if (editingCollection === null) {
+		if (idx == -1) {
 			// add the new collection at the end
 			collections = [...collections, {...placeholderCollection}]; 
 		}
 		else {
-			// assign to the collection we're editing
-			Object.assign(editingCollection, placeholderCollection);
-			collections = [...collections];  // to trigger reactivity
+			// replace the edited collection
+			collections = collections.slice(0, idx).concat(
+			        [{...placeholderCollection}], collections.slice(idx + 1)
+			);
 		}
 
-		dialogOpen = false;
-
+		editDialogOpen = false;
 		saveCollections(collections);
 	}
 
-	function cancel() {
-		dialogOpen = false;
+	function cancelEdit() {
+		editDialogOpen = false;
+	}
+
+	function confirmDelete() {
+		deleteConfirmationOpen = true;
+	}
+
+	function cancelDelete() {
+		deleteConfirmationOpen = false;
+	}
+
+	function remove() {
+		collections = collections.slice(0, idx).concat(collections.slice(idx + 1));
+		deleteConfirmationOpen = false;
+		editDialogOpen = false;
+		saveCollections(collections);
 	}
 </script>
 
@@ -81,10 +100,10 @@
 				<CircularProgress style="height: 48px; width: 48px;" indeterminate />
 			</div>
 		{:else}
-		{#each collections as collection}
+		{#each collections as collection, idx}
 			<Item
 				Item={collection}
-				on:click={() => editCollection(collection)}
+				on:click={() => editIndex(idx)}
 				on:toggle={(e) => collection.active = e.detail.checked}
 				on:download={() => alert('download')}
 			/>
@@ -100,9 +119,9 @@
 		{/if}
 	</div>
 
-	<!-- This should be moved to its own component, but I can't make that work... -->
+	<!-- Edit dialog. Should be moved to its own component, but I can't make that work... -->
 	<Dialog
-		bind:open={dialogOpen}
+		bind:open={editDialogOpen}
 		fullscreen
 		aria-labelledby="fullscreen-title"
 		aria-describedby="fullscreen-content"
@@ -123,17 +142,46 @@
 		
 				<Textfield bind:value={placeholderCollection.targetFolder} label="Target folder" style="width: 300px;" />
 			</div>
+
+			{#if idx >= 0}
+				<div style="display: flex; flex-wrap: wrap; height: 90px; justify-content: center; align-content: center;">
+					<Button variant="unelevated" on:click={confirmDelete} style="background-color: red;">
+						<Label>Delete</Label>
+					</Button>
+				</div>
+			{/if}
 		</Content>
 
 		<Actions>
 			<Button on:click={save}>
 				<Label>Save</Label>
 			</Button>
-			<Button on:click={cancel}>
+			<Button on:click={cancelEdit}>
 				<Label>Cancel</Label>
 			</Button>
 		</Actions>
 	</Dialog>
+
+	<!-- Deletion confirmation dialog -->
+	<Dialog
+		bind:open={deleteConfirmationOpen}
+		aria-labelledby="default-focus-title"
+		aria-describedby="default-focus-content"
+	>
+		<Title id="default-focus-title">Are you sure?</Title>
+		<Content id="default-focus-content">
+			Are you sure you want to delete this collection?
+		</Content>
+		<Actions>
+			<Button on:click={remove}>
+				<Label>Delete</Label>
+			</Button>
+			<Button on:click={cancelDelete}>
+				<Label>Cancel</Label>
+			</Button>
+		</Actions>
+	</Dialog>
+
 </main>
 
 <style>
