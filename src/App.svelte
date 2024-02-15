@@ -1,5 +1,5 @@
 <script lang="ts">
-	import loadCollections from './browser-specific/LoadCollections';
+	import { loadCollections, saveCollections } from './browser-specific/Persistence';
 
 	import { onMount } from 'svelte';
 	import Item from './components/Item.svelte';
@@ -66,7 +66,7 @@
 
 		dialogOpen = false;
 
-		chrome.storage.local.set({ collections: collections });
+		saveCollections(collections);
 	}
 
 	function cancel() {
