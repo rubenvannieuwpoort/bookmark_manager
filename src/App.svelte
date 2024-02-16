@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { setBookmarks, removeBookmarks } from './browser-specific/bookmarks';
-	import { loadCollections } from './browser-specific/Persistence';
+	import { loadCollections, saveCollections } from './browser-specific/Persistence';
 	import { refreshCache, getBookmarks } from './bookmarks';
 	import type { Collection } from './bookmarks';
 
@@ -96,11 +96,10 @@
 		refreshCache(collections[idx]);
 	}
 
-	async function toggle(collection: Collection, active: boolean) {
-		collection.active = active;
+	async function stateChanged(collection: Collection) {
 		var bookmarks: Bookmark[] = await getBookmarks(collection);
 
-		if (active) {
+		if (collection.active) {
 			await setBookmarks(bookmarks, collection.folder);
 		}
 		else {
@@ -120,7 +119,7 @@
 			<Item
 				Item={collection}
 				on:click={() => editIndex(idx)}
-				on:toggle={(e) => toggle(collection, e.detail.checked)}
+				on:toggle={(e) => { collection.active = e.detail.checked; stateChanged(collection); }}
 				on:download={() => update(idx)}
 			/>
 			{/each}
