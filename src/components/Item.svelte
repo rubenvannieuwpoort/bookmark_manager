@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { Collection } from '../types/Collection';
+	import type { Collection } from '../bookmarks';
 	import Card from '@smui/card';
 	import Checkbox from '@smui/checkbox';
 	import IconButton from '@smui/icon-button';

@@ -2,7 +2,7 @@
 	import { setBookmarks, removeBookmarks } from './browser-specific/bookmarks';
 	import { loadCollections, saveCollections } from './browser-specific/Persistence';
 	import { refreshCache, getBookmarks } from './bookmarks';
-	import type { Collection } from './bookmarks';
+	import type { Collection, Bookmark } from './bookmarks';
 
 	import { onMount } from 'svelte';
 	import Item from './components/Item.svelte';
