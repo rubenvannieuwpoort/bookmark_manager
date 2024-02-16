@@ -1,4 +1,4 @@
-import type { Collection } from "../types/Collection";
+import type { Collection } from "../bookmarks";
 
 // const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
 

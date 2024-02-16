@@ -1,9 +1,11 @@
 <script lang="ts">
-	import { loadCollections, saveCollections } from './browser-specific/Persistence';
+	import { setBookmarks, removeBookmarks } from './browser-specific/bookmarks';
+	import { loadCollections } from './browser-specific/Persistence';
+	import { refreshCache, getBookmarks } from './bookmarks';
+    import type { Collection } from './bookmarks';
 
 	import { onMount } from 'svelte';
 	import Item from './components/Item.svelte';
-    import type { Collection } from './types/Collection';
 
 	import Fab, { Icon } from '@smui/fab';
 	import Textfield from '@smui/textfield';
@@ -91,6 +93,23 @@
 		editDialogOpen = false;
 		saveCollections(collections);
 	}
+
+	async function update(idx: number) {
+		refreshCache(collections[idx]);
+	}
+
+	async function toggle(collection: Collection, active: boolean) {
+		collection.active = active;
+		var bookmarks: Bookmark[] = await getBookmarks(collection);
+
+		if (active) {
+			await setBookmarks(bookmarks, collection.targetFolder);
+		}
+		else {
+			// TODO
+			await removeBookmarks(bookmarks, collection.targetFolder);
+		}
+	}
 </script>
 
 <main>
@@ -104,8 +123,8 @@
 			<Item
 				Item={collection}
 				on:click={() => editIndex(idx)}
-				on:toggle={(e) => collection.active = e.detail.checked}
-				on:download={() => alert('download')}
+				on:toggle={(e) => toggle(collection, e.detail.checked)}
+				on:download={() => update(idx)}
 			/>
 			{/each}
 
