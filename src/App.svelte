@@ -11,7 +11,6 @@
 	import Textfield from '@smui/textfield';
 	import Button, { Label } from '@smui/button';
 	import Dialog, { Title, Header, Content, Actions } from '@smui/dialog';
-	import Select, { Option } from '@smui/select';
 	import CircularProgress from '@smui/circular-progress';
 
 	let idx = 0;
@@ -24,8 +23,7 @@
 	const newCollectionTemplate: Collection = {
 		name: 'My new collection',
 		source: '',
-		target: 'bookmarkbar',
-		targetFolder: 'My new collection',
+		folder: 'My new collection',
 		active: false
 	};
 
@@ -67,7 +65,7 @@
 		else {
 			// replace the edited collection
 			collections = collections.slice(0, idx).concat(
-					[{...placeholderCollection}], collections.slice(idx + 1)
+				[{...placeholderCollection}], collections.slice(idx + 1)
 			);
 		}
 
@@ -103,10 +101,10 @@
 		var bookmarks: Bookmark[] = await getBookmarks(collection);
 
 		if (active) {
-			await setBookmarks(bookmarks, collection.targetFolder);
+			await setBookmarks(bookmarks, collection.folder);
 		}
 		else {
-			await removeBookmarks(bookmarks, collection.targetFolder);
+			await removeBookmarks(bookmarks, collection.folder);
 		}
 	}
 </script>
@@ -152,13 +150,8 @@
 			<div>
 				<Textfield bind:value={placeholderCollection.source} label="Source URL" style="width: 325px;" />
 			</div>
-			<div>
-				<Select bind:value={placeholderCollection.target} label="Target" style="width: 175px;">
-					<Option value="bookmarkbar">Bookmark bar</Option>
-					<Option value="otherbookmarks">Other bookmarks</Option>
-				</Select>
-		
-				<Textfield bind:value={placeholderCollection.targetFolder} label="Target folder" style="width: 300px;" />
+			<div>		
+				<Textfield bind:value={placeholderCollection.folder} label="Target folder" style="width: 300px;" />
 			</div>
 
 			{#if idx >= 0}
