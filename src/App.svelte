@@ -106,7 +106,6 @@
 			await setBookmarks(bookmarks, collection.targetFolder);
 		}
 		else {
-			// TODO
 			await removeBookmarks(bookmarks, collection.targetFolder);
 		}
 	}
