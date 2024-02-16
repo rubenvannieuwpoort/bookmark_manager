@@ -1,9 +1,6 @@
 import type { Bookmark } from "../bookmarks";
 
 export async function setBookmarks(bookmarks: Bookmark[], path: string) {
-    console.log(`importing bookmarks to "${path}":`);
-    console.log(bookmarks);
-
     chrome.bookmarks.create({ title: path, parentId: '1' }, (folder) => {
         bookmarks.forEach((bookmark) => {
             chrome.bookmarks.create({

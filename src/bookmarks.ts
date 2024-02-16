@@ -13,7 +13,6 @@ export type Bookmark = {
 };
 
 export async function fetchBookmarks(collection: Collection) {
-    console.log('fetching');
     return (await fetch(collection.source)).json();
 }
 
@@ -22,18 +21,13 @@ export async function refreshCache(collection: Collection) {
 }
 
 async function setCache(collection, bookmarks) {
-    console.log('setting cache');
     var cache = (await chrome.storage.local.get('cache'))['cache'];
     cache[collection.source] = bookmarks;
     chrome.storage.local.set({ cache: cache });
 }
 
 export async function getBookmarks(collection: Collection) {
-    console.log('getting');
     var cache = (await chrome.storage.local.get(cache))['cache'];
-
-    console.log('cache');
-    console.log(cache);
 
     if (collection.source in cache) {
         console.log('found in cache');
