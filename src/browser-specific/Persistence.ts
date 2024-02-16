@@ -1,7 +1,5 @@
 import type { Collection } from "../bookmarks";
 
-// const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
-
 export async function loadCollections() {
 	let result = await chrome.storage.local.get('collections');
 	if ('collections' in result) {

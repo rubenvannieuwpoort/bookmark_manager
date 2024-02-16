@@ -2,7 +2,7 @@
 	import { setBookmarks, removeBookmarks } from './browser-specific/bookmarks';
 	import { loadCollections } from './browser-specific/Persistence';
 	import { refreshCache, getBookmarks } from './bookmarks';
-    import type { Collection } from './bookmarks';
+	import type { Collection } from './bookmarks';
 
 	import { onMount } from 'svelte';
 	import Item from './components/Item.svelte';
@@ -29,7 +29,7 @@
 		active: false
 	};
 
-    let collections: Collection[] = [];
+	let collections: Collection[] = [];
 	
 	onMount(async () => {
 		loading = true;
@@ -67,7 +67,7 @@
 		else {
 			// replace the edited collection
 			collections = collections.slice(0, idx).concat(
-			        [{...placeholderCollection}], collections.slice(idx + 1)
+					[{...placeholderCollection}], collections.slice(idx + 1)
 			);
 		}
 
