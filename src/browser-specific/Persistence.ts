@@ -1,7 +1,8 @@
 import type { Collection } from "../bookmarks";
+import browser from '../browser-polyfill';
 
 export async function loadCollections() {
-	let result = await chrome.storage.local.get('collections');
+	let result = await browser.storage.local.get('collections');
 	if ('collections' in result) {
 		return result['collections'];
 	}
@@ -9,5 +10,5 @@ export async function loadCollections() {
 }
 
 export async function saveCollections(collections: Collection[]) {
-	chrome.storage.local.set({ collections: collections });
+	browser.storage.local.set({ collections: collections });
 }
