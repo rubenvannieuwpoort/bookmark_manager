@@ -5,7 +5,7 @@ export async function loadCollections() {
 	if ('collections' in result) {
 		return result['collections'];
 	}
-	return null;
+	return [];
 }
 
 export async function saveCollections(collections: Collection[]) {
