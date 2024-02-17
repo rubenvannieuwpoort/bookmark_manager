@@ -20,19 +20,35 @@ export async function refreshCache(collection: Collection) {
 }
 
 async function setCache(collection, bookmarks) {
-	var cache = (await chrome.storage.local.get('cache'))['cache'];
+	var cache = (await chrome.storage.local.get('cache'));
+	cache = ('cache' in cache) ? cache['cache'] : {};
+
 	cache[collection.source] = bookmarks;
 	chrome.storage.local.set({ cache: cache });
 }
 
-export async function getBookmarks(collection: Collection) {
-	var cache = (await chrome.storage.local.get(cache))['cache'];
+async function getFromCache(url) {
+	var cache = await chrome.storage.local.get(cache);
 
-	if (collection.source in cache) {
-		console.log('found in cache');
-		return cache[collection.source];
+	if (!('cache' in cache)) {
+		return null;
 	}
-	var bookmarks = await fetchBookmarks(collection);
-	setCache(collection, bookmarks);
+
+	cache = cache['cache'];
+	if (!(url in cache)) {
+		return null;
+	}
+
+	return cache[url];
+}
+
+export async function getBookmarks(collection: Collection) {
+	var bookmarks = await getFromCache(collection.source);
+
+	if (bookmarks == null) {
+		bookmarks = await fetchBookmarks(collection);
+		setCache(collection, bookmarks);
+	}
+
 	return bookmarks;
 }
