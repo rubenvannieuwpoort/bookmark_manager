@@ -1,5 +1,5 @@
 import type { Collection } from "../bookmarks";
-import browser from '../browser-polyfill';
+import browser from 'webextension-polyfill';
 
 export async function loadCollections() {
 	let result = await browser.storage.local.get('collections');

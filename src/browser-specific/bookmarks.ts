@@ -1,5 +1,5 @@
 import type { Bookmark } from "../bookmarks";
-import browser from '../browser-polyfill';
+import browser from 'webextension-polyfill';
 
 export async function setBookmarks(bookmarks: Bookmark[], path: string): Promise<undefined> {
 	// TODO: if a folder with this name already exists, that folder should be used
