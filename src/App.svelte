@@ -13,12 +13,12 @@
 	import Dialog, { Title, Header, Content, Actions } from '@smui/dialog';
 	import CircularProgress from '@smui/circular-progress';
 
-	let idx = 0;
+	let idx: number = 0;
 
-	let deleteConfirmationOpen = false;
-	let editableTitle = '';
-	let editDialogOpen = false;
-	let loading = false;
+	let deleteConfirmationOpen: boolean = false;
+	let editableTitle: string = '';
+	let editDialogOpen: boolean = false;
+	let loading: boolean = false;
 
 	const newCollectionTemplate: Collection = {
 		name: 'My new collection',
@@ -39,23 +39,23 @@
 
 	let placeholderCollection: Collection = {...newCollectionTemplate};
 
-	function addNewCollection() {
+	function addNewCollection(): void {
 		idx = -1;
 		editCollection(newCollectionTemplate);
 	}
 
-	function editIndex(i: number) {
+	function editIndex(i: number): void {
 		idx = i;
 		editCollection(collections[i]);
 	}
 
-	function editCollection(collection: Collection) {
+	function editCollection(collection: Collection): void {
 		editableTitle = collection.name;
 		placeholderCollection = {...collection};
 		editDialogOpen = true;
 	}
 
-	function save() {
+	function save(): void {
 		placeholderCollection.name = editableTitle;
 
 		if (idx == -1) {

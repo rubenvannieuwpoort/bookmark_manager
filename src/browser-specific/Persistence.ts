@@ -1,7 +1,7 @@
 import type { Collection } from "../bookmarks";
 import browser from 'webextension-polyfill';
 
-export async function loadCollections() {
+export async function loadCollections(): Promise<Collection[]> {
 	let result = await browser.storage.local.get('collections');
 	if ('collections' in result) {
 		return result['collections'];
@@ -9,6 +9,6 @@ export async function loadCollections() {
 	return [];
 }
 
-export async function saveCollections(collections: Collection[]) {
-	browser.storage.local.set({ collections: collections });
+export async function saveCollections(collections: Collection[]): Promise<void> {
+	await browser.storage.local.set({ collections: collections });
 }

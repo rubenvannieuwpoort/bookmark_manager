@@ -13,15 +13,15 @@ export type Bookmark = {
 	active: boolean;  //  true to show, false to hide
 };
 
-export async function fetchBookmarks(collection: Collection) {
+export async function fetchBookmarks(collection: Collection): Promise<Bookmark[]> {
 	return (await fetch(collection.source)).json();
 }
 
-export async function refreshCache(collection: Collection) {
+export async function refreshCache(collection: Collection): Promise<void> {
 	setCache(collection, await fetchBookmarks(collection));
 }
 
-async function setCache(collection, bookmarks) {
+async function setCache(collection: Collection, bookmarks: Bookmark[]): Promise<void> {
 	var cache = (await browser.storage.local.get('cache'));
 	cache = ('cache' in cache) ? cache['cache'] : {};
 
@@ -29,8 +29,8 @@ async function setCache(collection, bookmarks) {
 	browser.storage.local.set({ cache: cache });
 }
 
-async function getFromCache(url) {
-	var cache = await browser.storage.local.get(cache);
+async function getFromCache(url: string): Promise<Bookmark[] | null> {
+	var cache = await browser.storage.local.get('cache');
 
 	if (!('cache' in cache)) {
 		return null;
@@ -44,7 +44,7 @@ async function getFromCache(url) {
 	return cache[url];
 }
 
-export async function getBookmarks(collection: Collection) {
+export async function getBookmarks(collection: Collection): Promise<Bookmark[]> {
 	var bookmarks = await getFromCache(collection.source);
 
 	if (bookmarks == null) {
