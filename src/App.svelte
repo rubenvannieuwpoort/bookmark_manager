@@ -73,30 +73,30 @@
 		saveCollections(collections);
 	}
 
-	function cancelEdit() {
+	function cancelEdit(): void {
 		editDialogOpen = false;
 	}
 
-	function confirmDelete() {
+	function confirmDelete(): void {
 		deleteConfirmationOpen = true;
 	}
 
-	function cancelDelete() {
+	function cancelDelete(): void {
 		deleteConfirmationOpen = false;
 	}
 
-	function remove() {
+	async function remove(): Promise<void> {
 		collections = collections.slice(0, idx).concat(collections.slice(idx + 1));
 		deleteConfirmationOpen = false;
 		editDialogOpen = false;
-		saveCollections(collections);
+		await saveCollections(collections);
 	}
 
 	async function update(idx: number) {
-		refreshCache(collections[idx]);
+		await refreshCache(collections[idx]);
 	}
 
-	async function stateChanged(collection: Collection) {
+	async function stateChanged(collection: Collection): Promise<void> {
 		var bookmarks: Bookmark[] = await getBookmarks(collection);
 
 		if (collection.active) {
@@ -105,6 +105,8 @@
 		else {
 			await removeBookmarks(bookmarks, collection.folder);
 		}
+
+		await saveCollections(collections);
 	}
 </script>
 

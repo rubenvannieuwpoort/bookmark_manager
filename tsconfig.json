@@ -14,7 +14,6 @@
     "isolatedModules": true,
     "noEmit": true,
     "jsx": "preserve",
-    "allowJs": true,
-    "checkJs": true
+    "allowJs": false,
   }
 }

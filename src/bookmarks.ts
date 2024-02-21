@@ -18,7 +18,7 @@ export async function fetchBookmarks(collection: Collection): Promise<Bookmark[]
 }
 
 export async function refreshCache(collection: Collection): Promise<void> {
-	setCache(collection, await fetchBookmarks(collection));
+	await setCache(collection, await fetchBookmarks(collection));
 }
 
 async function setCache(collection: Collection, bookmarks: Bookmark[]): Promise<void> {
@@ -26,7 +26,7 @@ async function setCache(collection: Collection, bookmarks: Bookmark[]): Promise<
 	cache = ('cache' in cache) ? cache['cache'] : {};
 
 	cache[collection.source] = bookmarks;
-	browser.storage.local.set({ cache: cache });
+	await browser.storage.local.set({ cache: cache });
 }
 
 async function getFromCache(url: string): Promise<Bookmark[] | null> {

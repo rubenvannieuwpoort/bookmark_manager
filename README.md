@@ -15,7 +15,6 @@ After building, the `public` folder can be imported by clicking 'load unpacked' 
 
 
 ### To do
-- Add types everywhere (yeah, I know, programming without types and then adding them later is kind of the wrong way around 😅)
 - Handle error paths
   - Handle invalid URL
   - Handle invalid JSON
