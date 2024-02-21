@@ -4,7 +4,7 @@ export async function setBookmarks(bookmarks: Bookmark[], path: string): Promise
 	// TODO: if a folder with this name already exists, that folder should be used
 	var folder = await browser.bookmarks.create({ title: path });
 	var promises = bookmarks.map((bookmark) =>
-	browser.bookmarks.create({
+		browser.bookmarks.create({
 			parentId: folder.id,
 			title: bookmark.name,
 			url: bookmark.url,
