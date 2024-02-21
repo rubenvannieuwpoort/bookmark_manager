@@ -15,6 +15,9 @@ After building, the `public` folder can be imported by clicking 'load unpacked' 
 
 
 ### To do
+- Instead of using the first child of the root of `` to save the bookmark folder, let the user select the target folder. For this we need a treeview such as one of
+  - https://framework7.io/docs/treeview
+  - https://carbondesignsystem.com/components/tree-view/usage/
 - Handle error paths
   - Handle invalid URL
   - Handle invalid JSON

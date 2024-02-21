@@ -1,5 +1,3 @@
-import browser from 'webextension-polyfill';
-
 export type Collection = {
 	name: string;    // name in UI
 	source: string;  // source URL
