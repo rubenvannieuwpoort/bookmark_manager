@@ -183,7 +183,7 @@
 			Are you sure you want to delete this collection?
 		</Content>
 		<Actions>
-			<Button on:click$preventDefault={remove}>
+			<Button on:click$preventDefault={() => { remove(); updated(); }}>
 				<Label>Delete</Label>
 			</Button>
 			<Button on:click$preventDefault={cancelDelete}>
