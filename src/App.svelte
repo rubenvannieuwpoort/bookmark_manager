@@ -13,7 +13,7 @@
 	let idx: number = 0;
 
 	let deleteConfirmationOpen: boolean = false;
-	let editableTitle: string = '';
+	let dialogTitle: string = '';
 	let editDialogOpen: boolean = false;
 	let loading: boolean = false;
 
@@ -35,17 +35,18 @@
 	let placeholderCollection: Collection = {...newCollectionTemplate};
 
 	function addNewCollection(): void {
+		dialogTitle = "New collection";
 		idx = -1;
 		editCollection(newCollectionTemplate);
 	}
 
 	function editIndex(i: number): void {
+		dialogTitle = "Edit collection";
 		idx = i;
 		editCollection(collections[i]);
 	}
 
 	function editCollection(collection: Collection): void {
-		editableTitle = collection.name;
 		placeholderCollection = {...collection};
 		editDialogOpen = true;
 	}
@@ -54,8 +55,7 @@
 		if (idx == -1) {
 			loading = true;
 			let newCollection: Collection = {
-				name: editableTitle,
-				source: placeholderCollection.source,
+				...placeholderCollection,
 				content: await fetchBookmarks(placeholderCollection.source)
 			};
 			loading = false;
@@ -65,13 +65,6 @@
 		}
 		else {
 			// replace the edited collection
-			placeholderCollection.name = editableTitle;
-			placeholderCollection = {
-				name: editableTitle,
-				source: placeholderCollection.source,
-				content: placeholderCollection.content
-			};
-
 			collections = collections.slice(0, idx).concat(
 				[{...placeholderCollection}], collections.slice(idx + 1)
 			);
@@ -109,6 +102,9 @@
 			await activateCollection(collection, id);
 		}
     	collections = [...collections];  // trigger reactivity
+	}
+
+	async function updated(): Promise<void> {
 		await storeCollections(collections);
 	}
 </script>
@@ -124,8 +120,8 @@
 			<Item
 				Item={collection}
 				on:click={() => editIndex(idx)}
-				on:toggle={(e) => { toggleCollection(collection, e.detail.checked); }}
-				on:download={() => refreshCollectionContent(collection)}
+				on:toggle={(e) => { toggleCollection(collection, e.detail.checked); updated(); }}
+				on:download={() => { refreshCollectionContent(collection); updated(); } }
 			/>
 			{/each}
 
@@ -147,9 +143,12 @@
 		aria-describedby="fullscreen-content"
 	>
 		<Header>
-			<h2 contenteditable="true" bind:textContent={editableTitle}></h2>
+			<h2>{dialogTitle}</h2>
 		</Header>
 		<Content id="fullscreen-content" style="height: 230px;">
+			<div>
+				<Textfield bind:value={placeholderCollection.name} label="Name" style="width: 325px;" />
+			</div>
 			<div>
 				<Textfield bind:value={placeholderCollection.source} label="Source URL" style="width: 325px;" />
 			</div>
