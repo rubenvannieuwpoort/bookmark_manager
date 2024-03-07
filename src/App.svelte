@@ -19,9 +19,7 @@
 
 	const newCollectionTemplate: Collection = {
 		name: 'My new collection',
-		source: '',
-		content: [],
-		ids: []
+		source: ''
 	};
 
 	let collections: Collection[] = [];
