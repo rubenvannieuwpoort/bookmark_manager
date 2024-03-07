@@ -1,8 +1,4 @@
 <script lang="ts">
-	import { setBookmarks, removeBookmarks } from './browser-specific/bookmarks';
-	import { loadCollections, saveCollections } from './browser-specific/Persistence';
-	import { refreshCache, getBookmarks } from './bookmarks';
-	import type { Collection, Bookmark } from './bookmarks';
 
 	import { onMount } from 'svelte';
 	import Item from './components/Item.svelte';
@@ -12,6 +8,7 @@
 	import Button, { Label } from '@smui/button';
 	import Dialog, { Title, Header, Content, Actions } from '@smui/dialog';
 	import CircularProgress from '@smui/circular-progress';
+    import { refreshCollectionContent, type Collection, loadCollections, storeCollections, deactivateCollection, activateCollection, getDefaultLocationId, fetchBookmarks } from './backend';
 
 	let idx: number = 0;
 
@@ -23,18 +20,16 @@
 	const newCollectionTemplate: Collection = {
 		name: 'My new collection',
 		source: '',
-		folder: 'My new collection',
-		active: false
+		content: [],
+		ids: []
 	};
 
 	let collections: Collection[] = [];
 	
 	onMount(async () => {
 		loading = true;
-		loadCollections().then((loadedCollections) => {
-			collections = loadedCollections;
-			loading = false;
-		});
+		collections = await loadCollections();
+		loading = false;
 	});
 
 	let placeholderCollection: Collection = {...newCollectionTemplate};
@@ -55,22 +50,35 @@
 		editDialogOpen = true;
 	}
 
-	function save(): void {
-		placeholderCollection.name = editableTitle;
-
+	async function save(): Promise<void> {
 		if (idx == -1) {
+			loading = true;
+			let newCollection: Collection = {
+				name: editableTitle,
+				source: placeholderCollection.source,
+				content: await fetchBookmarks(placeholderCollection.source)
+			};
+			loading = false;
+
 			// add the new collection at the end
-			collections = [...collections, {...placeholderCollection}]; 
+			collections = [...collections, {...newCollection}]; 
 		}
 		else {
 			// replace the edited collection
+			placeholderCollection.name = editableTitle;
+			placeholderCollection = {
+				name: editableTitle,
+				source: placeholderCollection.source,
+				content: placeholderCollection.content
+			};
+
 			collections = collections.slice(0, idx).concat(
 				[{...placeholderCollection}], collections.slice(idx + 1)
 			);
 		}
 
 		editDialogOpen = false;
-		saveCollections(collections);
+		storeCollections(collections);
 	}
 
 	function cancelEdit(): void {
@@ -89,24 +97,19 @@
 		collections = collections.slice(0, idx).concat(collections.slice(idx + 1));
 		deleteConfirmationOpen = false;
 		editDialogOpen = false;
-		await saveCollections(collections);
+		await storeCollections(collections);
 	}
 
-	async function update(idx: number) {
-		await refreshCache(collections[idx]);
-	}
-
-	async function stateChanged(collection: Collection): Promise<void> {
-		var bookmarks: Bookmark[] = await getBookmarks(collection);
-
-		if (collection.active) {
-			await setBookmarks(bookmarks, collection.folder);
+	async function toggleCollection(collection: Collection, active: boolean): Promise<void> {
+		if (!active) {
+			await deactivateCollection(collection);
 		}
 		else {
-			await removeBookmarks(bookmarks, collection.folder);
+			let id = await getDefaultLocationId();
+			await activateCollection(collection, id);
 		}
-
-		await saveCollections(collections);
+    	collections = [...collections];  // trigger reactivity
+		await storeCollections(collections);
 	}
 </script>
 
@@ -121,8 +124,8 @@
 			<Item
 				Item={collection}
 				on:click={() => editIndex(idx)}
-				on:toggle={(e) => { collection.active = e.detail.checked; stateChanged(collection); }}
-				on:download={() => update(idx)}
+				on:toggle={(e) => { toggleCollection(collection, e.detail.checked); }}
+				on:download={() => refreshCollectionContent(collection)}
 			/>
 			{/each}
 
@@ -136,7 +139,7 @@
 		{/if}
 	</div>
 
-	<!-- Edit dialog. Should be moved to its own component, but I can't make that work... -->
+	<!-- Edit dialog. Should be moved to its own component, but I can't get that to work... -->
 	<Dialog
 		bind:open={editDialogOpen}
 		fullscreen
@@ -146,13 +149,9 @@
 		<Header>
 			<h2 contenteditable="true" bind:textContent={editableTitle}></h2>
 		</Header>
-
 		<Content id="fullscreen-content" style="height: 230px;">
 			<div>
 				<Textfield bind:value={placeholderCollection.source} label="Source URL" style="width: 325px;" />
-			</div>
-			<div>		
-				<Textfield bind:value={placeholderCollection.folder} label="Target folder" style="width: 300px;" />
 			</div>
 
 			{#if idx >= 0}
@@ -185,10 +184,10 @@
 			Are you sure you want to delete this collection?
 		</Content>
 		<Actions>
-			<Button on:click={remove}>
+			<Button on:click$preventDefault={remove}>
 				<Label>Delete</Label>
 			</Button>
-			<Button on:click={cancelDelete}>
+			<Button on:click$preventDefault={cancelDelete}>
 				<Label>Cancel</Label>
 			</Button>
 		</Actions>

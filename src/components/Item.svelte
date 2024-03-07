@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { Collection } from '../bookmarks';
+	import type { Collection } from '../backend';
 	import Card from '@smui/card';
 	import Checkbox from '@smui/checkbox';
 	import IconButton from '@smui/icon-button';
@@ -9,11 +9,11 @@
 
 	const dispatch = createEventDispatcher();
 
-	let checked = Item.active;
+	let checked: boolean = Item.ids !== undefined;
 </script>
 
 <main>
-	<Card class="card" variant="outlined" style={'margin: 5px; padding: 5px;' + (Item.active ? ' color: black;' : ' color: grey;')}>
+	<Card class="card" variant="outlined" style={'margin: 5px; padding: 5px;' + (Item.ids !== undefined ? ' color: black;' : ' color: grey;')}>
 		<div class="itembody">
 			<div>
 				<Checkbox bind:checked on:change={() => dispatch('toggle', { checked: checked })} />

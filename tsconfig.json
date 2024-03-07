@@ -4,6 +4,7 @@
   "include": ["src/**/*"],
   "exclude": ["node_modules/*", "__sapper__/*", "public/*"],
   "compilerOptions": {
+    "ignoreDeprecations": "5.0",
     "module": "esnext",
     "target": "es2017",
     "moduleResolution": "node",
