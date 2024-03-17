@@ -160,6 +160,9 @@
 			<div>
 				<Textfield bind:value={placeholderCollection.source} label="Source URL" style="width: 325px;" />
 			</div>
+			<div>
+				<Textfield bind:value={placeholderCollection.mainFolder.name} label="Folder name" style="width: 325px;" />
+			</div>
 
 			{#if idx >= 0}
 				<div style="display: flex; flex-wrap: wrap; height: 90px; justify-content: center; align-content: center;">
