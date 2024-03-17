@@ -9,11 +9,11 @@
 
 	const dispatch = createEventDispatcher();
 
-	let checked: boolean = Item.ids !== undefined;
+	let checked: boolean = 'id' in Item.mainFolder && Item.mainFolder.id !== undefined;
 </script>
 
 <main>
-	<Card class="card" variant="outlined" style={'margin: 5px; padding: 5px;' + (Item.ids !== undefined ? ' color: black;' : ' color: grey;')}>
+	<Card class="card" variant="outlined" style={'margin: 5px; padding: 5px;' + ('id' in Item.mainFolder && Item.mainFolder.id !== undefined ? ' color: black;' : ' color: grey;')}>
 		<div class="itembody">
 			<div>
 				<Checkbox bind:checked on:change={() => dispatch('toggle', { checked: checked })} />

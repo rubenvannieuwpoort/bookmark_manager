@@ -3,8 +3,13 @@ const collectionStorageKey = 'BookmarkManager_BookmarkCollections' as const;
 export type Collection = {
     name: string;
     source: string;
-    content?: BookmarkNode[];
-    ids?: string[];
+    
+    // to keep track of the location in the bookmarks
+    parentId: string;
+    index: number;
+
+    // containing folder
+    mainFolder: BookmarkFolder;
 };
 
 export type BookmarkNode = BookmarkFolder | BookmarkItem;
@@ -21,51 +26,54 @@ export type BookmarkItem = {
     id?: string;
 };
 
-// TODO: remove
-export async function getDefaultLocationId(): Promise<string> {
-    return '1';
+export async function activateCollection(collection: Collection): Promise<void> {
+
+    console.log(`removed, saved index ${collection.index}`);
+    await addBookmarkNode(collection.mainFolder, collection.parentId, collection.index);
 }
 
-export async function activateCollection(collection: Collection, id: string): Promise<void> {
-    let ids: string[] = [];
-    console.log(collection);
-    for (let node of collection.content!) {
-        ids.push(await addBookmarkNode(node, id));
-    }
-    collection.ids = ids;
-}
-
-async function addBookmarkNode(node: BookmarkNode, id: string): Promise<string> {
+async function addBookmarkNode(node: BookmarkNode, parentId: string, index?: number): Promise<string> {
     if ('children' in node) {
         // `node` is a folder
         let folder = await browser.bookmarks.create({
             title: node.name,
-            parentId: id
+            parentId: parentId,
+            index: index
         });
 
         for (let child of node.children) {
             await addBookmarkNode(child, folder.id);
         }
 
-        return folder.id;
+        node.id = folder.id;
     }
     else {
         // `node` is a bookmark
         let bookmark = await browser.bookmarks.create({
             title: node.name,
             url: node.url,
-            parentId: id,
+            parentId: parentId,
+            index: index
         });
 
-        return bookmark.id;
+        node.id = bookmark.id;
     }
+
+    return node.id!;
 }
 
 export async function deactivateCollection(collection: Collection): Promise<void> {
-    for (let id of collection.ids!) {
-        await browser.bookmarks.removeTree(id);
-    }
-    delete collection.ids;
+    // set the index of the collection to index of the first node
+    // so we can add it in the same place the next time it is added
+    // TODO: add some checks here?
+    const mainNode = (await browser.bookmarks.get(collection.mainFolder.id!))[0];
+    collection.parentId = mainNode.parentId;
+    collection.index = mainNode.index;
+
+    console.log(`removed, saved index ${collection.index}`);
+
+    await browser.bookmarks.removeTree(mainNode.id!);
+    delete collection.mainFolder.id;
 }
 
 export async function fetchBookmarks(source: string): Promise<BookmarkNode[]> {
@@ -76,7 +84,10 @@ export async function fetchBookmarks(source: string): Promise<BookmarkNode[]> {
 export async function refreshCollectionContent(collection: Collection): Promise<void> {
     let bookmarks: BookmarkNode[] = await fetchBookmarks(collection.source);
     // TODO: handle errors in fetching bookmarks
-    collection.content = bookmarks;
+
+    deactivateCollection(collection);
+    collection.mainFolder.children = bookmarks;
+    activateCollection(collection);
 }
 
 export async function loadCollections(): Promise<Collection[]> {
@@ -91,7 +102,6 @@ async function load(key: string): Promise<any> {
 }
 
 export async function storeCollections(collections: Collection[]): Promise<void> {
-    console.log(collections);
     store(collectionStorageKey, collections);
 }
 

@@ -8,7 +8,7 @@
 	import Button, { Label } from '@smui/button';
 	import Dialog, { Title, Header, Content, Actions } from '@smui/dialog';
 	import CircularProgress from '@smui/circular-progress';
-    import { refreshCollectionContent, type Collection, loadCollections, storeCollections, deactivateCollection, activateCollection, getDefaultLocationId, fetchBookmarks } from './backend';
+    import { refreshCollectionContent, type Collection, loadCollections, storeCollections, deactivateCollection, activateCollection, fetchBookmarks } from './backend';
 
 	let idx: number = 0;
 
@@ -19,7 +19,13 @@
 
 	const newCollectionTemplate: Collection = {
 		name: 'My new collection',
-		source: ''
+		source: '',
+		mainFolder: {
+			name: 'containing folder',
+			children: []
+		},
+		parentId: '1',
+		index: 0
 	};
 
 	let collections: Collection[] = [];
@@ -54,8 +60,12 @@
 			loading = true;
 			let newCollection: Collection = {
 				...placeholderCollection,
-				content: await fetchBookmarks(placeholderCollection.source)
 			};
+
+			newCollection.mainFolder.children = await fetchBookmarks(placeholderCollection.source);
+
+			// TODO: add UI for picking a parent folder, then set parentId and index based on UI
+
 			loading = false;
 
 			// add the new collection at the end
@@ -96,10 +106,10 @@
 			await deactivateCollection(collection);
 		}
 		else {
-			let id = await getDefaultLocationId();
-			await activateCollection(collection, id);
+			await activateCollection(collection);
 		}
     	collections = [...collections];  // trigger reactivity
+		storeCollections(collections);
 	}
 
 	async function updated(): Promise<void> {
